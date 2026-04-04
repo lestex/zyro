@@ -5,7 +5,7 @@ use_omarchy_helpers() {
   export OMARCHY_PATH="/root/omarchy"
   export OMARCHY_INSTALL="/root/omarchy/install"
   export OMARCHY_INSTALL_LOG_FILE="/var/log/omarchy-install.log"
-  export OMARCHY_MIRROR="$(cat /root/omarchy_mirror)"
+  export OMARCHY_MIRROR="$(cat /root/zyro_mirror)"
   source /root/omarchy/install/helpers/all.sh
 }
 
@@ -95,8 +95,8 @@ install_base_system() {
   cp /etc/pacman.conf /mnt/etc/pacman.conf
 
   # Mount the offline mirror so it's accessible in the chroot
-  mkdir -p /mnt/var/cache/omarchy/mirror/offline
-  mount --bind /var/cache/omarchy/mirror/offline /mnt/var/cache/omarchy/mirror/offline
+  mkdir -p /mnt/var/cache/zyro/mirror/offline
+  mount --bind /var/cache/zyro/mirror/offline /mnt/var/cache/zyro/mirror/offline
 
   # Mount the packages dir so it's accessible in the chroot
   mkdir -p /mnt/opt/packages

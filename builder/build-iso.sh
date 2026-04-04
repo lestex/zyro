@@ -9,12 +9,12 @@ pacman --noconfirm -Sy archiso git sudo base-devel jq grub
 
 # Install omarchy-keyring for package verification during build
 # The [omarchy] repo is defined in /configs/pacman-online.conf with SigLevel = Optional TrustAll
-pacman --config /configs/pacman-online-${OMARCHY_MIRROR}.conf --noconfirm -Sy omarchy-keyring
+pacman --config /configs/pacman-online-${ZYRO_MIRROR}.conf --noconfirm -Sy omarchy-keyring
 pacman-key --populate omarchy
 
 # Setup build locations
 build_cache_dir="/var/cache"
-offline_mirror_dir="$build_cache_dir/airootfs/var/cache/omarchy/mirror/offline"
+offline_mirror_dir="$build_cache_dir/airootfs/var/cache/zyro/mirror/offline"
 mkdir -p $build_cache_dir/
 mkdir -p $offline_mirror_dir/
 
@@ -30,14 +30,14 @@ rm -rf "$build_cache_dir/airootfs/etc/xdg/reflector"
 # Bring in our configs
 cp -r /configs/* $build_cache_dir/
 
-# Persist OMARCHY_MIRROR so it's available at install time
-echo "$OMARCHY_MIRROR" > "$build_cache_dir/airootfs/root/omarchy_mirror"
+# Persist ZYRO_MIRROR so it's available at install time
+echo "$ZYRO_MIRROR" > "$build_cache_dir/airootfs/root/zyro_mirror"
 
 # Setup Omarchy itself
 if [[ -d /omarchy ]]; then
   cp -rp /omarchy "$build_cache_dir/airootfs/root/omarchy"
 else
-  git clone -b $OMARCHY_INSTALLER_REF https://github.com/$OMARCHY_INSTALLER_REPO.git "$build_cache_dir/airootfs/root/omarchy"
+  git clone -b $ZYRO_INSTALLER_REF https://github.com/$ZYRO_INSTALLER_REPO.git "$build_cache_dir/airootfs/root/omarchy"
 fi
 
 # Make log uploader available in the ISO too
@@ -81,14 +81,14 @@ all_packages+=($(grep -v '^#' /builder/archinstall.packages | grep -v '^$'))
 
 # Download all the packages to the offline mirror inside the ISO
 mkdir -p /tmp/offlinedb
-pacman --config /configs/pacman-online-${OMARCHY_MIRROR}.conf --noconfirm -Syw "${all_packages[@]}" --cachedir $offline_mirror_dir/ --dbpath /tmp/offlinedb
+pacman --config /configs/pacman-online-${ZYRO_MIRROR}.conf --noconfirm -Syw "${all_packages[@]}" --cachedir $offline_mirror_dir/ --dbpath /tmp/offlinedb
 repo-add --new "$offline_mirror_dir/offline.db.tar.gz" "$offline_mirror_dir/"*.pkg.tar.zst
 
 # Create a symlink to the offline mirror instead of duplicating it.
-# mkarchiso needs packages at /var/cache/omarchy/mirror/offline in the container,
-# but they're actually in $build_cache_dir/airootfs/var/cache/omarchy/mirror/offline
-mkdir -p /var/cache/omarchy/mirror
-ln -s "$offline_mirror_dir" "/var/cache/omarchy/mirror/offline"
+# mkarchiso needs packages at /var/cache/zyro/mirror/offline in the container,
+# but they're actually in $build_cache_dir/airootfs/var/cache/zyro/mirror/offline
+mkdir -p /var/cache/zyro/mirror
+ln -s "$offline_mirror_dir" "/var/cache/zyro/mirror/offline"
 
 # Copy the offline pacman.conf to the ISO's /etc directory so the live environment uses our
 # same config when booted. 

@@ -1,0 +1,17 @@
+#!/bin/bash
+omarchy-pkg-add rclone
+mkdir -p ~/.config/rclone
+
+read -rp "Access key ID: " access_key
+read -rsp "Secret access key: " secret_access_key
+echo
+read -rp "Endpoint (e.g. https://<accountid>.r2.cloudflarestorage.com): " endpoint
+
+cat > ~/.config/rclone/rclone.conf << EOF
+[Zyro]
+type = s3
+provider = Cloudflare
+access_key_id = $access_key
+secret_access_key = $secret_access_key
+endpoint = $endpoint
+EOF
