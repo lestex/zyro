@@ -12,30 +12,25 @@ jobs:
     container:
       image: archlinux/archlinux:latest
       options: --privileged
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Build ISO in Arch Linux container
+      with:
+        submodules: recursive
+
+    - name: Build ISO
+      env:
+        ZYRO_INSTALLER_REPO: basecamp/omarchy
+        ZYRO_INSTALLER_REF: master
+        ZYRO_MIRROR: stable
       run: |
-        docker run --rm \
-          --privileged \
-          -v "${{ github.workspace }}:/workspace" \
-          -w /workspace \
-          archlinux:latest \
-          bash -c "
-            pacman -Syu --noconfirm && \
-            chmod +x build_iso.sh && \
-            ./build_iso.sh
-          "
-    
+        mkdir -p /out
+        bash builder/build-iso.sh
+
     - name: Upload ISO artifact
       uses: actions/upload-artifact@v4
       with:
         name: zyro-iso-${{ github.run_number }}
-        path: out/*.iso
+        path: /out/*.iso
         retention-days: 30
