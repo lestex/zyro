@@ -28,6 +28,9 @@ jobs:
         ZYRO_INSTALLER_REF: master
         ZYRO_MIRROR: stable
       run: |
+        ln -s "$GITHUB_WORKSPACE/configs" /configs
+        ln -s "$GITHUB_WORKSPACE/builder" /builder
+        ln -s "$GITHUB_WORKSPACE/archiso" /archiso
         mkdir -p /out
         bash builder/build-iso.sh
 
